@@ -41,10 +41,23 @@ function collisions()
 
 function bullet_collision()
 {
-    //collision between bullet and walls
+    //collision between bullet, walls and ennemy
     for (var i = 0; i < player1.bullets.length; i++)
     {
-        if (Math.abs(player1.bullets[i].position.x) >= WIDTH / 2 ||
+        if (Math.abs(player1.bullets[i].position.x-player2.position.x) <= (10)
+            && Math.abs(player1.bullets[i].position.y-player2.position.y) <= (10))
+        {
+            player2.life = player2.life - 1;
+            console.log(player2.life);
+            if (!player2.life) {
+                player2.dead();
+            }
+
+            scene.remove(player1.bullets[i]);
+            player1.bullets.splice(i, 1);
+            i--;
+        }
+        else if (Math.abs(player1.bullets[i].position.x) >= WIDTH / 2 ||
             Math.abs(player1.bullets[i].position.y) >= HEIGHT / 2)
         {
             scene.remove(player1.bullets[i]);
@@ -63,10 +76,23 @@ function player_collision()
 
     if ( x > WIDTH )
         player1.graphic.position.x -= x - WIDTH;
+    if ( x < 0 )
+        player1.graphic.position.x -= x;
     if ( y < 0 )
         player1.graphic.position.y -= y;
     if ( y > HEIGHT )
         player1.graphic.position.y -= y - HEIGHT;
+
+    if (Math.abs(player1.graphic.position.x-player2.graphic.position.x) <= 10
+        && Math.abs(player1.graphic.position.y-player2.graphic.position.y) <= 10)
+    {
+        if (player1.life > 0)
+            player1.life = player1.life - 1;
+        else
+           player1.dead(); 
+        player1.graphic.position.x = 0;
+        player1.graphic.position.y = 0;
+    }
 
 }
 
@@ -93,7 +119,13 @@ function player_falling()
             && (y > tileY) 
             && (y < mtileY))
         {
-            player1.dead();
+            if (player1.life > 0)
+                player1.life = player1.life - 1;
+            else
+               player1.dead(); 
+            player1.graphic.position.x = 0;
+            player1.graphic.position.y = 0;
+            // player1.dead();
         }
     }
 
